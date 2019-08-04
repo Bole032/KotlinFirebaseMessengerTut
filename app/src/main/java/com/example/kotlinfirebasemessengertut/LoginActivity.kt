@@ -1,5 +1,6 @@
 package com.example.kotlinfirebasemessengertut
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -31,6 +32,9 @@ class LoginActivity: AppCompatActivity(){
 
                     //else if successful;
                     Log.d("Main", "Successfully logged in user with uid: ${it.result?.user?.uid}")
+                    val intent = Intent(this, LatestMessagesActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
                 }
                 .addOnFailureListener {
                     Log.d("Main", "Failed to login user: ${it.message}")
