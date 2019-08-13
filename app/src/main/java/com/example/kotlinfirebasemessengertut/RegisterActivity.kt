@@ -6,12 +6,14 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
@@ -128,7 +130,9 @@ class RegisterActivity : AppCompatActivity() {
     }
 }
 
-class User(val uid: String, val username: String, val profileImageUrl: String)
+@Parcelize  //u gradle:app smo dodali experimental = true da bi ovo radilo,
+// celo ovo sranje sa Parcelize nam dozvoljava da ceo user objekat prebacujemo u druge aktivitije
+class User(val uid: String, val username: String, val profileImageUrl: String): Parcelable
 {
     constructor() :this("", "", "")
 }
