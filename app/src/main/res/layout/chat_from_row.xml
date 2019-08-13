@@ -4,7 +4,8 @@
                                                    android:orientation="vertical"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
-                                                   android:id="@+id/ConstraintLayout"
+
+
                                                     android:layout_marginBottom="8dp">
     <TextView
             android:text="this is my message that will wrap
@@ -14,12 +15,13 @@ into multiple lines and keep on going"
             android:padding="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2" app:layout_constraintStart_toEndOf="@+id/imageView"
-            android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/tbFromMessage" app:layout_constraintStart_toEndOf="@+id/iwFromMessage"
+            android:layout_marginStart="8dp"/>
     <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp" app:srcCompat="@android:drawable/btn_star_big_on"
-            android:id="@+id/imageView" android:layout_marginTop="8dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" android:id="@+id/iwFromMessage"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
