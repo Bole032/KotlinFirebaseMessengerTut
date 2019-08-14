@@ -18,7 +18,9 @@ into multiple lines and keep on going"
             app:layout_constraintTop_toTopOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toStartOf="@id/iwToMessage" android:layout_marginTop="8dp"
             android:id="@+id/tbToMessage"/>
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+            app:civ_border_width="2dp"
+            app:civ_border_color="@android:color/white"
             android:layout_width="50dp"
             android:layout_height="50dp" app:srcCompat="@android:drawable/btn_star_big_on"
 

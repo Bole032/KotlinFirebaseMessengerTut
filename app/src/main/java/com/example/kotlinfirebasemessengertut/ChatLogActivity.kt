@@ -3,11 +3,13 @@ package com.example.kotlinfirebasemessengertut
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.example.kotlinfirebasemessengertut.LatestMessagesActivity.Companion.currentUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -23,6 +25,7 @@ class ChatLogActivity : AppCompatActivity() {
     }
 
     val adapter = GroupAdapter<ViewHolder>()
+    var fromUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +34,8 @@ class ChatLogActivity : AppCompatActivity() {
         recyclerViewChatLog.adapter = adapter
 
        // val username = intent.getStringExtra(NewMessageActivity.USER_KEY) //iz new mesidza uzimamo vrednost usernamea
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY) //iz newMesidza uzimamo ceo objekat User
-        supportActionBar?.title = user.username      //postavlja username kao title
+        fromUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY) //iz newMesidza uzimamo ceo objekat User
+        supportActionBar?.title = fromUser?.username      //postavlja username kao title
 
         listenForMessages()
 
@@ -48,15 +51,20 @@ class ChatLogActivity : AppCompatActivity() {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) { //ovo kad u bazi primeti novu poruku
                val chatMessage = p0.getValue(ChatMessage::class.java)
+                val currentUser = LatestMessagesActivity.currentUser
 
-                if (chatMessage != null) {
+                //ovaj if dole proverava da li je poruka koja je nadjena u databaseu pripada razgovoru ova dva korisnika, currentUser i fromUser
+                if (chatMessage != null && (chatMessage.toId == fromUser?.uid || chatMessage.fromId == fromUser?.uid) && (chatMessage.fromId ==currentUser!!.uid || chatMessage.toId == currentUser!!.uid)) {
                     Log.d(TAG, chatMessage.text)
 
-                    if(chatMessage.fromId != FirebaseAuth.getInstance().uid) {
-                        adapter.add(ChatFromItem(chatMessage.text))     //u recycle view dodaje tudju poruku
+
+                    if(chatMessage.fromId == fromUser!!.uid) {
+
+                        adapter.add(ChatFromItem(chatMessage.text, fromUser!!))     //u recycle view dodaje tudju poruku
                     }
-                    else{
-                    adapter.add(ChatToItem(chatMessage.text))       //u recycle view dodaje tvoju poruku
+                    else if(chatMessage.fromId == currentUser!!.uid){
+
+                        adapter.add(ChatToItem(chatMessage.text, currentUser!!))       //u recycle view dodaje tvoju poruku
                     }
                 }
             }
@@ -103,9 +111,14 @@ class ChatLogActivity : AppCompatActivity() {
 }
 
 
-class ChatFromItem(val text:String): Item<ViewHolder>(){
+class ChatFromItem(val text:String, val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.tbFromMessage.text = text
+
+        // load the user image in to the imageView
+        val uri = user.profileImageUrl
+        val targetImageView = viewHolder.itemView.iwFromMessage
+        Picasso.get().load(uri).into(targetImageView)
     }
 
     override fun getLayout(): Int {//prikazuje dobijene poruke
@@ -113,9 +126,15 @@ class ChatFromItem(val text:String): Item<ViewHolder>(){
     }
 }
 
-class ChatToItem(val text: String): Item<ViewHolder>(){
+class ChatToItem(val text: String, val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.tbToMessage.text = text
+
+        //loaduje image u imageView
+        val uri = user.profileImageUrl
+        val targetImageView = viewHolder.itemView.iwToMessage
+        Picasso.get().load(uri).into(targetImageView)
+
     }
 
     override fun getLayout(): Int {//prikazuje poslate poruke
