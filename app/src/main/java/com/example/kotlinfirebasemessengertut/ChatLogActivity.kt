@@ -46,7 +46,9 @@ class ChatLogActivity : AppCompatActivity() {
 
     }
     private fun listenForMessages(){
-        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        val fromId = FirebaseAuth.getInstance().uid
+        val toId = fromUser?.uid     //CELA LOGIKA SA TO I FROM JE POMESANA, PREDLAZEM DA SE PROMENI SA CURRENT I OTHER
+        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
         ref.addChildEventListener(object: ChildEventListener{
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) { //ovo kad u bazi primeti novu poruku
@@ -54,7 +56,7 @@ class ChatLogActivity : AppCompatActivity() {
                 val currentUser = LatestMessagesActivity.currentUser
 
                 //ovaj if dole proverava da li je poruka koja je nadjena u databaseu pripada razgovoru ova dva korisnika, currentUser i fromUser
-                if (chatMessage != null && (chatMessage.toId == fromUser?.uid || chatMessage.fromId == fromUser?.uid) && (chatMessage.fromId ==currentUser!!.uid || chatMessage.toId == currentUser!!.uid)) {
+                if (chatMessage != null ) {
                     Log.d(TAG, chatMessage.text)
 
 
@@ -95,13 +97,17 @@ class ChatLogActivity : AppCompatActivity() {
         val toId = user.uid     //kome salje
         if (fromId == null) return
 
-        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
         val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000 )
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our message: ${reference.key}")
+                tbChatLog.text.clear()
+                recyclerViewChatLog.scrollToPosition(adapter.itemCount - 1)
             }
+        toReference.setValue(chatMessage)
 
     }
     class ChatMessage(val id: String, val text: String, val fromId: String, val toId:String, val timestamp: Long){
