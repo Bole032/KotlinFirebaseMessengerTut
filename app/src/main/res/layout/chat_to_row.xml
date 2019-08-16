@@ -10,7 +10,7 @@
             android:text="this is my message that will wrap
 into multiple lines and keep on going"
             android:maxWidth="240dp"
-            android:background="@drawable/rounded_edittext"
+            android:background="@drawable/rounded_edittext_2"
             android:padding="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -35,7 +36,7 @@ class NewMessageActivity : AppCompatActivity() {
     companion object{
         val USER_KEY = "USER_KEY"
     }
-
+    val yourId = FirebaseAuth.getInstance().uid
     private fun fetchUsers()
     {
         val ref = FirebaseDatabase.getInstance().getReference("/users")
@@ -46,7 +47,7 @@ class NewMessageActivity : AppCompatActivity() {
                 p0.children.forEach {
                     Log.d("NewMessage", it.toString())
                     val user = it.getValue(User::class.java) //ovo je user klasa iz register aktivitija
-                    if (user!=null)
+                    if (user!=null && user.uid != yourId)
                         adapter.add(UserItem(user))
                 }
                 adapter.setOnItemClickListener { item, view -> //ovo ulazi u chat sa nekom osobom
