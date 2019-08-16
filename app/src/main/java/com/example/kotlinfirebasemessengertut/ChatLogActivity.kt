@@ -69,6 +69,7 @@ class ChatLogActivity : AppCompatActivity() {
                         adapter.add(ChatToItem(chatMessage.text, currentUser!!))       //u recycle view dodaje tvoju poruku
                     }
                 }
+                recyclerViewChatLog.scrollToPosition(adapter.itemCount - 1) //da nam prikaze najnovije poruke
             }
 
             override fun onCancelled(p0: DatabaseError) {
